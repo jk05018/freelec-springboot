@@ -18,6 +18,8 @@ dependencies {
 	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-mustache:2.7.0'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.7.0'
+	implementation 'org.springframework.session:spring-session-jdbc:2.7.0'
+
 
 	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'
