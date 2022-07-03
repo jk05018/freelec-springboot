@@ -1,4 +1,4 @@
-package com.jojoldu.book.freelecspringboot.config;
+package com.jojoldu.book.freelecspringboot.config.auth;
 
 import com.jojoldu.book.freelecspringboot.domain.user.Role;
 import lombok.RequiredArgsConstructor;

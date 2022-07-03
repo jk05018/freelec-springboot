@@ -1,7 +1,7 @@
-package com.jojoldu.book.freelecspringboot.config;
+package com.jojoldu.book.freelecspringboot.config.auth;
 
-import com.jojoldu.book.freelecspringboot.config.dto.OAuthAttributes;
-import com.jojoldu.book.freelecspringboot.config.dto.SessionUser;
+import com.jojoldu.book.freelecspringboot.config.auth.dto.OAuthAttributes;
+import com.jojoldu.book.freelecspringboot.config.auth.dto.SessionUser;
 import com.jojoldu.book.freelecspringboot.domain.user.User;
 import com.jojoldu.book.freelecspringboot.domain.user.UserRepository;
 import java.util.Collections;

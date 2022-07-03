@@ -1,4 +1,4 @@
-package com.jojoldu.book.freelecspringboot.config.dto;
+package com.jojoldu.book.freelecspringboot.config.auth.dto;
 
 import com.jojoldu.book.freelecspringboot.domain.user.User;
 import java.io.Serializable;
