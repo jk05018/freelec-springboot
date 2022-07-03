@@ -7,6 +7,7 @@ import com.jojoldu.book.freelecspringboot.domain.posts.Posts;
 import com.jojoldu.book.freelecspringboot.domain.posts.PostsRepository;
 import com.jojoldu.book.freelecspringboot.web.dto.PostsSaveRequestDto;
 import com.jojoldu.book.freelecspringboot.web.dto.PostsUpdateRequestDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -42,6 +43,8 @@ class PostsApiControllerTest {
   @Test
   void 프스트_등록() {
     // given
+    final LocalDateTime now = LocalDateTime.now();
+
     String title = "title";
     String content = "content";
     // 만약 objectNode말고 dto로 만들어 사용하려면 builder 패턴을 사용하는 것이 좋아보인다.
@@ -65,6 +68,12 @@ class PostsApiControllerTest {
 
     assertThat(posts.get(0).getTitle()).isEqualTo(title);
     assertThat(posts.get(0).getContent()).isEqualTo(content);
+
+
+    assertThat(posts.get(0).getCreatedDate()).isAfter(now);
+    assertThat(posts.get(0).getModifiedDate()).isAfter(now);
+
+
   }
 
   @Test

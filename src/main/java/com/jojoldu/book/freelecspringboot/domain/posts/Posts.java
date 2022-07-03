@@ -1,5 +1,6 @@
 package com.jojoldu.book.freelecspringboot.domain.posts;
 
+import com.jojoldu.book.freelecspringboot.domain.BaseTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.ColumnTransformers;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Posts {
+public class Posts extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
