@@ -1,7 +1,9 @@
 package com.jojoldu.book.freelecspringboot.web;
 
+import com.jojoldu.book.freelecspringboot.config.dto.SessionUser;
 import com.jojoldu.book.freelecspringboot.services.PostsService;
 import com.jojoldu.book.freelecspringboot.web.dto.PostsResponseDto;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,10 +15,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class IndexController {
 
   private final PostsService postsService;
+  private final HttpSession httpSession;
 
   @GetMapping("/")
   public String index(Model model){
     model.addAttribute("posts", postsService.findAllDesc());
+
+    SessionUser user = (SessionUser) httpSession.getAttribute("user");
+
+    if (user != null) {
+      model.addAttribute("userName", user.getName());
+    }
+
     return "index";
   }
 
