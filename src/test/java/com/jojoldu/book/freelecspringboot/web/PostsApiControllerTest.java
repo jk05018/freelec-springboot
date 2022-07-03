@@ -1,28 +1,34 @@
 package com.jojoldu.book.freelecspringboot.web;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jojoldu.book.freelecspringboot.domain.posts.Posts;
 import com.jojoldu.book.freelecspringboot.domain.posts.PostsRepository;
 import com.jojoldu.book.freelecspringboot.web.dto.PostsSaveRequestDto;
 import com.jojoldu.book.freelecspringboot.web.dto.PostsUpdateRequestDto;
-import java.time.LocalDateTime;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class PostsApiControllerTest {
 
@@ -35,19 +41,31 @@ class PostsApiControllerTest {
   @Autowired
   private PostsRepository postsRepository;
 
+
+  @Autowired
+  WebApplicationContext context;
+
+  private MockMvc mvc;
+
+  @BeforeEach
+  public void setUp() {
+    mvc = MockMvcBuilders
+        .webAppContextSetup(context)
+        .apply(springSecurity())
+        .build();
+  }
+
   @AfterEach
-  void tearDown() {
+  public void tearDown() throws Exception {
     postsRepository.deleteAll();
   }
 
   @Test
-  void 프스트_등록() {
-    // given
-    final LocalDateTime now = LocalDateTime.now();
-
+  @WithMockUser(roles="USER")
+  public void Posts_등록된다() throws Exception {
+    //given
     String title = "title";
     String content = "content";
-    // 만약 objectNode말고 dto로 만들어 사용하려면 builder 패턴을 사용하는 것이 좋아보인다.
     PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
         .title(title)
         .content(content)
@@ -56,38 +74,29 @@ class PostsApiControllerTest {
 
     String url = "http://localhost:" + port + "/api/v1/posts";
 
-    // when
-    ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, requestDto,
-        Long.class);
+    //when
+    mvc.perform(post(url)
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(new ObjectMapper().writeValueAsString(requestDto)))
+        .andExpect(status().isOk());
 
-    // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(responseEntity.getBody()).isGreaterThan(0L);
-
-    List<Posts> posts = postsRepository.findAll();
-
-    assertThat(posts.get(0).getTitle()).isEqualTo(title);
-    assertThat(posts.get(0).getContent()).isEqualTo(content);
-
-
-    assertThat(posts.get(0).getCreatedDate()).isAfter(now);
-    assertThat(posts.get(0).getModifiedDate()).isAfter(now);
-
-
+    //then
+    List<Posts> all = postsRepository.findAll();
+    assertThat(all.get(0).getTitle()).isEqualTo(title);
+    assertThat(all.get(0).getContent()).isEqualTo(content);
   }
 
   @Test
-  void 프스트_수정() {
-    // given
-    String title = "title";
-    String content = "content";
+  @WithMockUser(roles="USER")
+  public void Posts_수정된다() throws Exception {
+    //given
     Posts savedPosts = postsRepository.save(Posts.builder()
-        .title(title)
-        .content(content)
+        .title("title")
+        .content("content")
         .author("author")
         .build());
 
-    Long updatedId = savedPosts.getId();
+    Long updateId = savedPosts.getId();
     String expectedTitle = "title2";
     String expectedContent = "content2";
 
@@ -96,21 +105,17 @@ class PostsApiControllerTest {
         .content(expectedContent)
         .build();
 
-    String url = "http://localhost:" + port + "/api/v1/posts/" + updatedId;
+    String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
 
-    HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
+    //when
+    mvc.perform(put(url)
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(new ObjectMapper().writeValueAsString(requestDto)))
+        .andExpect(status().isOk());
 
-    // when
-    ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT,
-        requestEntity, Long.class);
-
-    // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(responseEntity.getBody()).isGreaterThan(0L);
-
-    List<Posts> posts = postsRepository.findAll();
-
-    assertThat(posts.get(0).getTitle()).isEqualTo(expectedTitle);
-    assertThat(posts.get(0).getContent()).isEqualTo(expectedContent);
+    //then
+    List<Posts> all = postsRepository.findAll();
+    assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
+    assertThat(all.get(0).getContent()).isEqualTo(expectedContent);
   }
 }

@@ -20,13 +20,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.7.0'
 	implementation 'org.springframework.session:spring-session-jdbc:2.7.0'
 
-
 	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 tasks.named('test') {
