@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: oauth,realdb
+    include: oauth,real-d
   jpa:
     properties:
       hibernate:
