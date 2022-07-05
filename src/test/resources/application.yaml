@@ -7,11 +7,7 @@ spring:
       enabled: true
   session:
     store-type: jdbc
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password:
+
   # test oauth
   security:
     oauth2:
@@ -20,4 +16,4 @@ spring:
           google:
             client-id: test
             client-secret: test
-            scope: profile, email
+            scope: profile,email
