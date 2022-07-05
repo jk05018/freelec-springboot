@@ -1,15 +1,12 @@
 spring:
   profiles:
-    include: oauth
+    include: oauth,realdb
   jpa:
-    show-sql: true
-  h2:
-    console:
-      enabled: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
   session:
     store-type: jdbc
-    jdbc:
-      initialize-schema: always
 
 
