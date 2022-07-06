@@ -172,5 +172,6 @@ gradle-app.setting
 .classpath
 
 application-oauth.yaml
+application-db.yaml
 
 # End of https://www.toptal.com/developers/gitignore/api/java,macos,gradle,intellij+all
